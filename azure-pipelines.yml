@@ -2,7 +2,6 @@
 # Build and test ASP.NET projects.
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-
 trigger:
   - main
 
@@ -28,26 +27,17 @@ steps:
       platform: "$(buildPlatform)"
       configuration: "$(buildConfiguration)"
 
-  - task: DotNetCoreCLI@2
-    displayName: "dotnet pack"
-    inputs:
-      command: "pack"
-      arguments: "--configuration $(buildConfiguration)"
-      packagesToPack: "ConsoleApp1/ConsoleApp1.csproj"
-      nobuild: true
-      versioningScheme: "off"
 
-  # The last task is a nuget command, nuget push
-  # This will push any .nupkg files to the 'TestFeed' artifact feed
-  # allowPackageConflicts allows us to build the same version and not throw an error when trying to push
-  # instead it just ingores the latest package unless the version changes
-  - task: NuGetCommand@2
-    displayName: "nuget push"
+  - task: DotNetCoreCLI@2
     inputs:
-      command: "push"
-      feedsToUse: "select"
-      packagesToPush: "$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg"
-      nuGetFeedType: "internal"
-      publishVstsFeed: "TestFeed"
-      versioningScheme: "off"
-      allowPackageConflicts: true
+      command: 'pack'
+      packagesToPack: '**/*.csproj'
+      versioningScheme: 'byBuildNumber'
+  
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: 'e46d6841-9a5d-4aa1-a922-5583f90fe3d5'
+

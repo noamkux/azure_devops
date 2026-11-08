@@ -20,11 +20,11 @@ steps:
       command: "pack"
       packagesToPack: "**/*.csproj"
       versioningScheme: "byBuildNumber"
-
+  #dfgrb
   - task: DotNetCoreCLI@2
     inputs:
-      azureSubscription: 'Azure subscription 1(9d1c0930-9a96-403c-b635-ccd0e0e7bf66)'
-      command: 'push'
-      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: 'e46d6841-9a5d-4aa1-a922-5583f90fe3d5'
+      azureSubscription: "Azure subscription 1(9d1c0930-9a96-403c-b635-ccd0e0e7bf66)"
+      command: "push"
+      packagesToPush: "$(Build.ArtifactStagingDirectory)/*.nupkg"
+      nuGetFeedType: "internal"
+      publishVstsFeed: "e46d6841-9a5d-4aa1-a922-5583f90fe3d5"

@@ -1,7 +1,3 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 
 trigger:
 - dev
@@ -10,3 +6,25 @@ pool:
   vmImage: 'ubuntu-latest'
 
 
+
+steps:
+  - task: SonarQubePrepare@8
+    inputs:
+      SonarQube: 'sonarqube'
+      scannerMode: 'dotnet'
+      projectKey: 'test_proj_test_proj_02e9fee2-e4c6-4e38-ac50-7bf61524de90'
+      projectName: 'test_proj'
+
+  - task: DotNetCoreCLI@2
+    inputs:
+      azureSubscription: 'Azure subscription 1(9d1c0930-9a96-403c-b635-ccd0e0e7bf66)'
+      command: 'build'
+      projects: '**/*.csproj'
+
+  - task: SonarQubeAnalyze@8
+    inputs:
+      jdkversion: 'JAVA_HOME_17_X64'
+
+  - task: SonarQubePublish@8
+    inputs:
+      pollingTimeoutSec: '300'

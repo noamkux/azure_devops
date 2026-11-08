@@ -1,0 +1,41 @@
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore dependencies'
+  inputs:
+    command: 'restore'
+    projects: '$(Build.SourcesDirectory)/AzurePipelines.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    projects: '$(Build.SourcesDirectory)/AzurePipelines.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run the program'
+  inputs:
+    command: 'run'
+    projects: '$(Build.SourcesDirectory)/AzurePipelines.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+    workingDirectory: '$(Build.SourcesDirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    projects: '$(Build.SourcesDirectory)/AzurePipelines.csproj'
+    arguments: '--configuration $(buildConfiguration)'

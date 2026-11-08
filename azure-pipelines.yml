@@ -1,4 +1,4 @@
-name: $(Date:yyyy.MM.dd)$(Rev:.r)
+name: $(Date:yyyy.MM.dd)$1.0.$(BuildID)
 
 trigger: none
 

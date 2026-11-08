@@ -1,4 +1,5 @@
 name: $(Date:yyyy.MM.dd)$(Rev:.r)
+
 trigger: none
 
 pool:
@@ -22,6 +23,7 @@ steps:
 
   - task: DotNetCoreCLI@2
     inputs:
+      azureSubscription: 'Azure subscription 1(9d1c0930-9a96-403c-b635-ccd0e0e7bf66)'
       command: 'push'
       packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
       nuGetFeedType: 'internal'

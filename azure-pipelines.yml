@@ -1,44 +1,28 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 name: $(Date:yyyy.MM.dd)$(Rev:.r)
-trigger:
-  - main
+trigger: none
 
 pool:
-  vmImage: "windows-latest"
+  vmImage: "ubuntu-latest"
 
 variables:
-  solution: "**/*.sln"
-  buildPlatform: "Any CPU"
   buildConfiguration: "Release"
 
 steps:
-  - task: NuGetToolInstaller@1
-
-  - task: NuGetCommand@2
+  - task: UseDotNet@2
+    displayName: "Install .NET SDK"
     inputs:
-      restoreSolution: "$(solution)"
-
-  - task: VSBuild@1
-    inputs:
-      solution: "$(solution)"
-      msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-      platform: "$(buildPlatform)"
-      configuration: "$(buildConfiguration)"
-
+      packageType: "sdk"
+      version: "10.x"
 
   - task: DotNetCoreCLI@2
     inputs:
-      command: 'pack'
-      packagesToPack: '**/*.csproj'
-      versioningScheme: 'byBuildNumber'
-  
+      command: "pack"
+      packagesToPack: "*/.csproj"
+      versioningScheme: "byBuildNumber"
+
   - task: DotNetCoreCLI@2
     inputs:
       command: 'push'
       packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
       nuGetFeedType: 'internal'
       publishVstsFeed: 'e46d6841-9a5d-4aa1-a922-5583f90fe3d5'
-

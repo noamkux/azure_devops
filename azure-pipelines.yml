@@ -16,6 +16,9 @@ steps:
       packageType: "sdk"
       version: "10.x"
 
+  - script: echo "Version - $(Build.BuildNumber)"
+    displayName: "Print version"
+
   - task: SonarQubePrepare@8
     displayName: "SonarQube - Prepare"
     condition: and(succeeded(), eq(variables.isMaster, true))

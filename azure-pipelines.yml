@@ -7,6 +7,7 @@ pool:
 
 variables:
   buildConfiguration: "Release"
+  isMaster: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
 
 steps:
   - task: UseDotNet@2
@@ -15,13 +16,34 @@ steps:
       packageType: "sdk"
       version: "10.x"
 
+  - task: SonarQubePrepare@8
+    displayName: "SonarQube - Prepare"
+    condition: and(succeeded(), eq(variables.isMaster, true))
+    inputs:
+      SonarQube: "sonarqube"
+      scannerMode: "dotnet"
+      projectKey: "test_proj_test_proj_02e9fee2-e4c6-4e38-ac50-7bf61524de90"
+      projectName: "test_proj"
+
   - task: DotNetCoreCLI@2
+    displayName: "Build and pack"
     inputs:
       command: "pack"
       packagesToPack: "**/*.csproj"
       versioningScheme: "byBuildNumber"
-  #dfgrb
+
+  - task: SonarQubeAnalyze@8
+    displayName: "SonarQube - Analyze"
+    condition: and(succeeded(), eq(variables.isMaster, true))
+
+  - task: SonarQubePublish@8
+    displayName: "SonarQube - Publish"
+    condition: and(succeeded(), eq(variables.isMaster, true))
+    inputs:
+      pollingTimeoutSec: "300"
+
   - task: DotNetCoreCLI@2
+    displayName: "Push to Azure Artifacts"
     inputs:
       command: "push"
       packagesToPush: "$(Build.ArtifactStagingDirectory)/*.nupkg"
